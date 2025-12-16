@@ -1,0 +1,13 @@
+torchrun --nproc_per_node=8 --master_port=29501 generate_dora_lightx2v.py --size 832*480\
+         --ckpt_dir "path/to/your/Wan-2.1/Wan2.1-T2V-14B" \
+         --dit_fsdp --t5_fsdp --ulysses_size 8 \
+         --vae_lora_checkpoint "path/to/your/decoder.bin" \
+         --lora_path "path/to/your/epoch-13-1500.safetensors" \
+         --lightx2v_path "path/to/your/lightx2v_T2V_14B_cfg_step_distill_v2_lora_rank64_bf16.safetensors" \
+         --sample_guide_scale 1.0 \
+         --frame_num 81 \
+         --sample_steps 4 \
+         --lora_ratio 1.0 \
+         --lora_prefix "" \
+         --prompt_file ./data/prompt.txt \
+         --output_dir ./output 

@@ -4,29 +4,43 @@
     Wan-Alpha
   </h1>
 
-  <h3>Wan-Alpha: High-Quality Text-to-Video Generation with Alpha Channel</h3>
+  <h3>Video Generation with Stable Transparency via Shiftable RGB-A Distribution Learner</h3>
 
 
 
 [![arXiv](https://img.shields.io/badge/arXiv-2509.24979-red)](https://arxiv.org/pdf/2509.24979)
 [![Project Page](https://img.shields.io/badge/Project_Page-Link-green)](https://donghaotian123.github.io/Wan-Alpha/)
-[![🤗 HuggingFace](https://img.shields.io/badge/%F0%9F%A4%97%20HuggingFace-Model-orange)](https://huggingface.co/htdong/Wan-Alpha)
-[![ComfyUI](https://img.shields.io/badge/ComfyUI-Version-blue)](https://huggingface.co/htdong/Wan-Alpha_ComfyUI)
+[![🤗 HuggingFace](https://img.shields.io/badge/%F0%9F%A4%97%20HuggingFace-Model_v1.0-orange)](https://huggingface.co/htdong/Wan-Alpha)
+[![ComfyUI](https://img.shields.io/badge/ComfyUI-Model_v1.0-blue)](https://huggingface.co/htdong/Wan-Alpha_ComfyUI)
+[![🤗 HuggingFace](https://img.shields.io/badge/%F0%9F%A4%97%20HuggingFace-Model_v2.0-yellow)](https://huggingface.co/htdong/Wan-Alpha-v2.0)
 
 
 </div>
 
 <img src="assets/teaser.png" alt="Wan-Alpha Qualitative Results" style="max-width: 100%; height: auto;">
 
->Qualitative results of video generation using **Wan-Alpha**. Our model successfully generates various scenes with accurate and clearly rendered transparency. Notably, it can synthesize diverse semi-transparent objects, glowing effects, and fine-grained details such as hair.
+>Qualitative results of video generation using **Wan-Alpha-v2.0**. Our model successfully generates various scenes with accurate and clearly rendered transparency. Notably, it can synthesize diverse semi-transparent objects, glowing effects, and fine-grained details such as hair.
 
 ---
 
 ### 🔥 News
+
+* **[2025.12.16]** Released Wan-Alpha v2.0, the Wan2.1-14B-T2V–adapted weights and inference code are now open-sourced.
+* **[2025.12.16]** We update our paper on [arXiv](https://arxiv.org/pdf/2509.24979).
 * **[2025.09.30]** Our technical report is available on [arXiv](https://arxiv.org/pdf/2509.24979).
 * **[2025.09.30]** Released Wan-Alpha v1.0, the Wan2.1-14B-T2V–adapted weights and inference code are now open-sourced.
 
 ---
+
+### 📝 To-Do List
+
+- [x] **Paper**: Available on [arXiv](https://arxiv.org/pdf/2509.24979).
+- [x] **Inference Code**: Released inference pipeline for Wan-Alpha v1.0 and v2.0.
+- [x] **Model Weights**: Released checkpoints for Wan-Alpha v1.0 and v2.0.
+- [ ] **Image-to-Video**: Release Wan-Alpha-I2V model weights.
+- [ ] **Dataset**: Open-source the VAE and T2V training dataset.
+- [ ] **Training Code (VAE&T2V)**: Release training scripts for the VAE and text-to-RGBA video generation.
+
 
 ### 🌟 Showcase
 
@@ -43,7 +57,7 @@
   </div> | -->
 | Prompt | Preview Video | Alpha Video |
 | :---: | :---: | :---: |
-| "Medium shot. A little girl holds a bubble wand and blows out colorful bubbles that float and pop in the air. The background of this video is transparent. Realistic style." | <img src="assets/girl.gif" width="320" height="180" style="object-fit:contain; display:block; margin:auto;"/> | <img src="assets/girl_pha.gif" width="320" height="180" style="object-fit:contain; display:block; margin:auto;"/> |
+| "The background of this video is transparent. It features a beige, woven rattan hanging chair with soft seat and back cushions. Realistic style. Medium shot." | <img src="assets/squirrel.gif" width="320" height="180" style="object-fit:contain; display:block; margin:auto;"/> | <img src="assets/squirrel_pha.gif" width="320" height="180" style="object-fit:contain; display:block; margin:auto;"/> |
 
 ##### For more results, please visit [Our Website](https://donghaotian123.github.io/Wan-Alpha/)
 
@@ -68,26 +82,30 @@ Download [Wan2.1-T2V-14B](https://huggingface.co/Wan-AI/Wan2.1-T2V-14B)
 
 Download [Lightx2v-T2V-14B](https://huggingface.co/Kijai/WanVideo_comfy/blob/main/Lightx2v/lightx2v_T2V_14B_cfg_step_distill_v2_lora_rank64_bf16.safetensors)
 
-Download [Wan-Alpha VAE](https://huggingface.co/htdong/Wan-Alpha)
+Download [Wan-Alpha](https://huggingface.co/htdong/Wan-Alpha-v2.0)
 
 ### 🧪 Usage
 You can test our model through:
 ```bash
-torchrun --nproc_per_node=8 --master_port=29501 generate_dora_lightx2v.py --size 832*480\
+torchrun --nproc_per_node=8 --master_port=29501 generate_dora_lightx2v_mask.py --size 832*480\
          --ckpt_dir "path/to/your/Wan-2.1/Wan2.1-T2V-14B" \
          --dit_fsdp --t5_fsdp --ulysses_size 8 \
          --vae_lora_checkpoint "path/to/your/decoder.bin" \
-         --lora_path "path/to/your/epoch-13-1500.safetensors" \
+         --lora_path "path/to/your/t2v.safetensors" \
          --lightx2v_path "path/to/your/lightx2v_T2V_14B_cfg_step_distill_v2_lora_rank64_bf16.safetensors" \
          --sample_guide_scale 1.0 \
          --frame_num 81 \
          --sample_steps 4 \
          --lora_ratio 1.0 \
          --lora_prefix "" \
+         --alpha_shift_mean 0.05 \
+         --cache_path_mask "path/to/your/gauss_mask" \
          --prompt_file ./data/prompt.txt \
          --output_dir ./output 
 ```
-You can specify the weights of `Wan2.1-T2V-14B` with `--ckpt_dir`, `LightX2V-T2V-14B with` `--lightx2v_path`, `Wan-Alpha-VAE` with `--vae_lora_checkpoint`, and `Wan-Alpha-T2V` with `--lora_path`. Finally, you can find the rendered RGBA videos with a checkerboard background and PNG frames at `--output_dir`.
+You can specify the weights of `Wan2.1-T2V-14B` with `--ckpt_dir`, `LightX2V-T2V-14B` with `--lightx2v_path`, `Wan-Alpha-VAE` with `--vae_lora_checkpoint`, and `Wan-Alpha-T2V` with `--lora_path`. Finally, you can find the rendered RGBA videos with a checkerboard background and PNG frames at `--output_dir`.
+
+You can use `gen_gaussian_mask.py` to generate a Gaussian mask from an existing alpha video. Alternatively, you can directly create a Gaussian ellipse video, which can be either static or dynamic (e.g., moving from left to right). Note that alpha_shift_mean is a fixed parameter.
 
 **Prompt Writing Tip:**  You need to specify that the background of the video is transparent, the visual style, the shot type (such as close-up, medium shot, wide shot, or extreme close-up), and a description of the main subject. Prompts support both Chinese and English input.
 
@@ -98,39 +116,7 @@ This video has a transparent background. Close-up shot. A colorful parrot flying
 
 ### 🔨 Official ComfyUI Version
 
-Note: We have reorganized our models to ensure they can be easily loaded into ComfyUI. Please note that these models differ from the ones mentioned above.
-
-1. Download models
-- The Wan DiT base model: [wan2.1_t2v_14B_fp16.safetensors](https://huggingface.co/Comfy-Org/Wan_2.1_ComfyUI_repackaged/blob/main/split_files/diffusion_models/wan2.1_t2v_14B_fp16.safetensors)
-- The Wan text encoder: [umt5_xxl_fp8_e4m3fn_scaled.safetensors](https://huggingface.co/Comfy-Org/Wan_2.1_ComfyUI_repackaged/blob/main/split_files/text_encoders/umt5_xxl_fp8_e4m3fn_scaled.safetensors)
-- The LightX2V model: [lightx2v_T2V_14B_cfg_step_distill_v2_lora_rank64_bf16.safetensors](https://huggingface.co/Kijai/WanVideo_comfy/blob/main/Lightx2v/lightx2v_T2V_14B_cfg_step_distill_v2_lora_rank64_bf16.safetensors)
-- Our RGBA Dora: [epoch-13-1500_changed.safetensors](https://huggingface.co/htdong/Wan-Alpha_ComfyUI/blob/main/epoch-13-1500_changed.safetensors)
-- Our RGB VAE Decoder: [wan_alpha_2.1_vae_rgb_channel.safetensors.safetensors](https://huggingface.co/htdong/Wan-Alpha_ComfyUI/blob/main/wan_alpha_2.1_vae_rgb_channel.safetensors.safetensors)
-- Our Alpha VAE Decoder: [wan_alpha_2.1_vae_alpha_channel.safetensors.safetensors](https://huggingface.co/htdong/Wan-Alpha_ComfyUI/blob/main/wan_alpha_2.1_vae_alpha_channel.safetensors.safetensors)
-
-2. Copy the files into the `ComfyUI/models` folder and organize them as follows:
-
-```
-ComfyUI/models
-├── diffusion_models
-│   └── wan2.1_t2v_14B_fp16.safetensors
-├── loras
-│   ├── epoch-13-1500_changed.safetensors
-│   └── lightx2v_T2V_14B_cfg_step_distill_v2_lora_rank64_bf16.safetensors
-├── text_encoders
-│   └── umt5_xxl_fp8_e4m3fn_scaled.safetensors
-├── vae
-│   ├── wan_alpha_2.1_vae_alpha_channel.safetensors.safetensors
-│   └── wan_alpha_2.1_vae_rgb_channel.safetensors.safetensors
-```
-
-3. Install our custom RGBA video previewer and PNG frames zip packer. Copy the file [RGBA_save_tools.py](comfyui/RGBA_save_tools.py) into the `ComfyUI/custom_nodes` folder.
-
-- Thanks to @mr-lab for an improved WebP version! You can find it in this [issue](https://github.com/WeChatCV/Wan-Alpha/issues/4).
-
-4. Example workflow: [wan_alpha_t2v_14B.json](comfyui/wan_alpha_t2v_14B.json)
-
-<img src="comfyui/comfyui.jpg" style="margin:auto;"/>
+Coming soon...
 
 
 ### 🤝 Acknowledgements
@@ -150,8 +136,8 @@ If you find our work helpful for your research, please consider citing our paper
 
 ```bibtex
 @misc{dong2025wanalpha,
-      title={Wan-Alpha: High-Quality Text-to-Video Generation with Alpha Channel}, 
-      author={Haotian Dong and Wenjing Wang and Chen Li and Di Lin},
+      title={Video Generation with Stable Transparency via Shiftable RGB-A Distribution Learner}, 
+      author={Haotian Dong and Wenjing Wang and Chen Li and Jing Lyu and Di Lin},
       year={2025},
       eprint={2509.24979},
       archivePrefix={arXiv},
