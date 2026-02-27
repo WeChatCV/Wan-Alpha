@@ -1,7 +1,7 @@
 <div align="center">
 
   <h1>
-    Wan-Alpha
+    Wan-Alpha (CVPR 2026)
   </h1>
 
   <h3>Video Generation with Stable Transparency via Shiftable RGB-A Distribution Learner</h3>
@@ -24,7 +24,7 @@
 ---
 
 ### 🔥 News
-
+* **[2026.02.21]** 🎉 Wan-Alpha v2.0 has been accepted by **CVPR 2026**!
 * **[2025.12.16]** Released Wan-Alpha v2.0, the Wan2.1-14B-T2V–adapted weights and inference code are now open-sourced.
 * **[2025.12.16]** We update our paper on [arXiv](https://arxiv.org/pdf/2509.24979).
 * **[2025.09.30]** Our technical report is available on [arXiv](https://arxiv.org/pdf/2509.24979).
