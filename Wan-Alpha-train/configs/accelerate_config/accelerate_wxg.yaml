@@ -1,0 +1,20 @@
+compute_environment: LOCAL_MACHINE
+deepspeed_config:
+ deepspeed_config_file: ./configs/deepspped_config/deepspeed_zero_stage_2.json
+ zero3_init_flag: false
+ deepspeed_multinode_launcher: standard
+distributed_type: DEEPSPEED
+downcast_bf16: 'no'
+dynamo_backend: 'NO'
+fsdp_config: {}
+gpu_ids: all
+main_training_function: main
+megatron_lm_config: {}
+num_machines: 8
+machine_rank: 7
+num_processes: 1
+rdzv_backend: static
+same_network: true
+tpu_name: null
+tpu_zone: null
+use_cpu: false

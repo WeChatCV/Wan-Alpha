@@ -24,6 +24,7 @@
 ---
 
 ### 🔥 News
+* **[2026.03.10]** Released Wan-Alpha v2.0 and Wan-Alpha VAE training codes and training datasets.
 * **[2026.02.21]** 🎉 Wan-Alpha v2.0 has been accepted by **CVPR 2026**!
 * **[2025.12.16]** Released Wan-Alpha v2.0, the Wan2.1-14B-T2V–adapted weights and inference code are now open-sourced.
 * **[2025.12.16]** We update our paper on [arXiv](https://arxiv.org/pdf/2509.24979).
@@ -37,9 +38,10 @@
 - [x] **Paper**: Available on [arXiv](https://arxiv.org/pdf/2509.24979).
 - [x] **Inference Code**: Released inference pipeline for Wan-Alpha v1.0 and v2.0.
 - [x] **Model Weights**: Released checkpoints for Wan-Alpha v1.0 and v2.0.
+- [x] **Dataset**: Open-source the VAE and T2V training dataset.
+- [x] **Training Code (VAE&T2V)**: Release training scripts for the VAE and text-to-RGBA video generation.
 - [ ] **Image-to-Video**: Release Wan-Alpha-I2V model weights.
-- [ ] **Dataset**: Open-source the VAE and T2V training dataset.
-- [ ] **Training Code (VAE&T2V)**: Release training scripts for the VAE and text-to-RGBA video generation.
+
 
 
 ### 🌟 Showcase
@@ -114,6 +116,107 @@ You can use `gen_gaussian_mask.py` to generate a Gaussian mask from an existing 
 This video has a transparent background. Close-up shot. A colorful parrot flying. Realistic style.
 ```
 
+### 🔥 Training
+**VAE**
+
+For the VAE training dataset, please refer to Section 3.3 of our paper for preparation details.
+
+You can train our VAE model through
+```bash
+save_path="./checkpoints"
+mkdir -p $save_path
+
+CUDA_VISIBLE_DEVICES=0,1,2,3,4,5,6,7 python3 train_vae.py \
+  --train_dataset_path data.csv \
+  --val_dataset_path val.csv \
+  --output_path $save_path \
+  --vae_path "Wan-2.1/Wan2.1-T2V-14B/Wan2.1_VAE.pth" \
+  --num_frames 17 \
+  --height 272 \
+  --width 272 \
+  --training_strategy deepspeed_stage_2 \
+  --max_epochs 100 \
+  --learning_rate 1e-4 \
+  --lora_rank 128 \
+  --batch_size 2 \
+  --model_id_with_origin_paths "Wan2.1-T2V-1.3B:diffusion_pytorch_model*.safetensors" \
+  --job_name "prompt" \
+  --use_gradient_checkpointing_offload \
+  --dataloader_num_workers 8 2>&1 | tee -a ${save_path}/train.log
+```
+Before VAE training, you need to cache empty text ("") for VAE training.
+
+**T2V**
+
+You can download the training dataset from [Google Drive](https://drive.google.com/drive/folders/1-pNyk-lQGnHqg-vzqqGVPp5PfuFI3WVr?usp=drive_link) or [Hugging Face](https://huggingface.co/datasets/htdong/Wan-Alpha-dataset).
+
+You can train our T2V model through
+```bash
+job_name="12"
+output_path="./checkpoints"
+mkdir -p ${output_path}
+
+# cache data
+for id in {0..7}; do
+  CUDA_VISIBLE_DEVICES=$id accelerate launch \
+    --mixed_precision='bf16' \
+    --num_processes=1 \
+    --num_machines=$WORLD_SIZE \
+    --machine_rank=$RANK \
+    --main_process_ip=$MASTER_ADDR \
+    --main_process_port=$MASTER_PORT \
+    examples/wanvideo/model_training/prepare_trans_alpha_mask.py \
+    --dataset_metadata_path data.csv \
+    --height 640 \
+    --width 624 \
+    --data_file_keys video_fgr,video_pha \
+    --dataset_repeat 1 \
+    --model_id_with_origin_paths "Wan2.1-T2V-14B:models_t5_umt5-xxl-enc-bf16.pth" \
+    --learning_rate 1e-4 \
+    --num_epochs 1 \
+    --remove_prefix_in_ckpt "pipe.t2v." \
+    --output_path "" \
+    --lora_base_model "dit" \
+    --lora_target_modules "q,k,v,o,ffn.0,ffn.2" \
+    --lora_rank 32 \
+    --job_name $job_name \
+    --job_id $id \
+    --job_num 8 \
+    --new_vae_path "VAE/pytorch_model.bin" \
+    --use_gradient_checkpointing_offload  2>&1 | tee -a ${output_path}/train_prepare.log &
+done
+trap 'kill 0' SIGINT
+wait
+
+
+# train
+accelerate launch \
+  --mixed_precision='bf16' \
+  --num_processes=$RANK_NUM \
+  --num_machines=$WORLD_SIZE \
+  --machine_rank=$RANK \
+  --main_process_ip=$MASTER_ADDR \
+  --main_process_port=$MASTER_PORT \
+  --config_file $ACCELERATE_CONFIG_FILE \
+  examples/wanvideo/model_training/train_gauss_ellipse.py \
+  --dataset_metadata_path data.csv \
+  --height 640 \
+  --width 624 \
+  --dataset_repeat 1 \
+  --model_id_with_origin_paths "Wan2.1-T2V-14B:diffusion_pytorch_model*.safetensors" \
+  --learning_rate 1e-4 \
+  --num_epochs 20 \
+  --remove_prefix_in_ckpt "pipe.dit." \
+  --output_path $output_path \
+  --lora_base_model "dit" \
+  --lora_target_modules "q,k,v,o,ffn.0,ffn.2" \
+  --lora_rank 32 \
+  --initial_learnable_value 0.05 \
+  --job_name $job_name \
+  --use_gradient_checkpointing_offload 2>&1 | tee -a ${output_path}/train.log
+```
+
+We recommend caching the processed data before starting the training process to improve efficiency.
 ### 🔨 Official ComfyUI Version
 
 Coming soon...
