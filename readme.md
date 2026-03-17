@@ -24,6 +24,7 @@
 ---
 
 ### 🔥 News
+* **[2026.03.17]** Released checkpoints for Wan-Alpha v1.0 and v2.0 VAE.
 * **[2026.03.10]** Released Wan-Alpha v2.0 and Wan-Alpha VAE training codes and training datasets.
 * **[2026.02.21]** 🎉 Wan-Alpha v2.0 has been accepted by **CVPR 2026**!
 * **[2025.12.16]** Released Wan-Alpha v2.0, the Wan2.1-14B-T2V–adapted weights and inference code are now open-sourced.
@@ -40,6 +41,7 @@
 - [x] **Model Weights**: Released checkpoints for Wan-Alpha v1.0 and v2.0.
 - [x] **Dataset**: Open-source the VAE and T2V training dataset.
 - [x] **Training Code (VAE&T2V)**: Release training scripts for the VAE and text-to-RGBA video generation.
+- [x] **VAE Checkpoints**: Release checkpoints for Wan-Alpha v1.0 and v2.0 VAE.
 - [ ] **Image-to-Video**: Release Wan-Alpha-I2V model weights.
 
 
@@ -84,7 +86,9 @@ Download [Wan2.1-T2V-14B](https://huggingface.co/Wan-AI/Wan2.1-T2V-14B)
 
 Download [Lightx2v-T2V-14B](https://huggingface.co/Kijai/WanVideo_comfy/blob/main/Lightx2v/lightx2v_T2V_14B_cfg_step_distill_v2_lora_rank64_bf16.safetensors)
 
-Download [Wan-Alpha](https://huggingface.co/htdong/Wan-Alpha-v2.0)
+Download [Wan-Alpha-v1.0](https://huggingface.co/htdong/Wan-Alpha), [Wan-Alpha-v2.0](https://huggingface.co/htdong/Wan-Alpha-v2.0)
+
+Download [Wan-Alpha-v1.0-VAE](https://huggingface.co/htdong/Wan-Alpha-VAE/blob/main/Wan-Alpha-VAE.bin), [Wan-Alpha-v2.0-VAE](https://huggingface.co/htdong/Wan-Alpha-VAE/blob/main/Wan-Alpha-v2-VAE.bin)
 
 ### 🧪 Usage
 You can test our model through:
@@ -107,7 +111,7 @@ torchrun --nproc_per_node=8 --master_port=29501 generate_dora_lightx2v_mask.py -
 ```
 You can specify the weights of `Wan2.1-T2V-14B` with `--ckpt_dir`, `LightX2V-T2V-14B` with `--lightx2v_path`, `Wan-Alpha-VAE` with `--vae_lora_checkpoint`, and `Wan-Alpha-T2V` with `--lora_path`. Finally, you can find the rendered RGBA videos with a checkerboard background and PNG frames at `--output_dir`.
 
-You can use `gen_gaussian_mask.py` to generate a Gaussian mask from an existing alpha video. Alternatively, you can directly create a Gaussian ellipse video, which can be either static or dynamic (e.g., moving from left to right). Note that alpha_shift_mean is a fixed parameter.
+We provide an example of [Gaussian mask](https://huggingface.co/htdong/Wan-Alpha-v2.0/blob/main/gauss_mask). You can also use `gen_gaussian_mask.py` to generate a Gaussian mask from an existing alpha video. Alternatively, you can directly create a Gaussian ellipse video, which can be either static or dynamic (e.g., moving from left to right). Note that alpha_shift_mean is a fixed parameter.
 
 **Prompt Writing Tip:**  You need to specify that the background of the video is transparent, the visual style, the shot type (such as close-up, medium shot, wide shot, or extreme close-up), and a description of the main subject. Prompts support both Chinese and English input.
 
