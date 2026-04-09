@@ -1,7 +1,7 @@
 <div align="center">
 
   <h1>
-    Wan-Alpha (CVPR 2026)
+    Wan-Alpha (CVPR 2026 Highlight)
   </h1>
 
   <h3>Video Generation with Stable Transparency via Shiftable RGB-A Distribution Learner</h3>
