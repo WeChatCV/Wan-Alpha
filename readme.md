@@ -25,7 +25,7 @@
 
 ### 🔥 News
 * **[2026.10.19]** We release the paper of Wan-Alpha++ on [arXiv](https://arxiv.org/abs/2610.26189).
-* **[2026.10.19]** Released checkpoints for normal RGBA video of Wan-Alpha++ on [GitHub](https://github.com/WeChatCV/Wan-Alpha++).
+* **[2026.10.19]** Released checkpoints for normal RGBA video of Wan-Alpha++ on [GitHub](https://github.com/WeChatCV/Wan-Alpha_PlusPlus).
 * **[2026.03.17]** Released checkpoints for Wan-Alpha v1.0 and v2.0 VAE.
 * **[2026.03.10]** Released Wan-Alpha v2.0 and Wan-Alpha VAE training codes and training datasets.
 * **[2026.02.21]** 🎉 Wan-Alpha v2.0 has been accepted by **CVPR 2026**!
