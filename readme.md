@@ -24,6 +24,8 @@
 ---
 
 ### 🔥 News
+* **[2026.10.19]** We release the paper of Wan-Alpha++ on [arXiv](https://arxiv.org/abs/2610.26189).
+* **[2026.10.19]** Released checkpoints for normal RGBA video of Wan-Alpha++ on [GitHub](https://github.com/WeChatCV/Wan-Alpha++).
 * **[2026.03.17]** Released checkpoints for Wan-Alpha v1.0 and v2.0 VAE.
 * **[2026.03.10]** Released Wan-Alpha v2.0 and Wan-Alpha VAE training codes and training datasets.
 * **[2026.02.21]** 🎉 Wan-Alpha v2.0 has been accepted by **CVPR 2026**!
@@ -42,7 +44,7 @@
 - [x] **Dataset**: Open-source the VAE and T2V training dataset.
 - [x] **Training Code (VAE&T2V)**: Release training scripts for the VAE and text-to-RGBA video generation.
 - [x] **VAE Checkpoints**: Release checkpoints for Wan-Alpha v1.0 and v2.0 VAE.
-- [ ] **Image-to-Video**: Release Wan-Alpha-I2V model weights.
+- [x] **Image-to-Video**: Release Wan-Alpha-I2V model weights.
 
 
 
@@ -242,14 +244,13 @@ We sincerely thank the authors and contributors of these projects.
 If you find our work helpful for your research, please consider citing our paper:
 
 ```bibtex
-@misc{dong2025wanalpha,
-      title={Video Generation with Stable Transparency via Shiftable RGB-A Distribution Learner}, 
-      author={Haotian Dong and Wenjing Wang and Chen Li and Jing Lyu and Di Lin},
-      year={2025},
-      eprint={2509.24979},
-      archivePrefix={arXiv},
-      primaryClass={cs.CV},
-      url={https://arxiv.org/abs/2509.24979}, 
+@InProceedings{Dong_2026_CVPR,
+    author    = {Dong, Haotian and Wang, Wenjing and Li, Chen and Lyu, Jing and Lin, Di},
+    title     = {Video Generation with Stable Transparency via Shiftable RGB-A Distribution Learner},
+    booktitle = {Proceedings of the IEEE/CVF Conference on Computer Vision and Pattern Recognition (CVPR)},
+    month     = {June},
+    year      = {2026},
+    pages     = {1885-1894}
 }
 ``` 
 
